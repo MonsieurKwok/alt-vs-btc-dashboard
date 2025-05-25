@@ -1,15 +1,21 @@
 import streamlit as st
+import os
+import yaml
+import streamlit_authenticator as stauth
 import pandas as pd
-import requests
 import numpy as np
 import time
-import streamlit_authenticator as stauth
-st.set_page_config(page_title="ALT vs BTC – Accès sécurisé", layout="wide")
-import yaml
+import requests
 from yaml.loader import SafeLoader
 from datetime import datetime
 
-# --- Auth ---
+# Autoriser mots de passe en clair (temporaire pour test sur Streamlit Cloud)
+os.environ['STREAMLIT_AUTHENTICATOR_PLAIN_PASSWORDS'] = '1'
+
+# Doit être en tout début
+st.set_page_config(page_title="ALT vs BTC – Accès sécurisé", layout="wide")
+
+# Charger le fichier config.yaml
 with open("config.yaml") as file:
     config = yaml.load(file, Loader=SafeLoader)
 
@@ -20,7 +26,7 @@ authenticator = stauth.Authenticate(
     config["cookie"]["expiry_days"]
 )
 
-# LOGIN dans la sidebar
+# Login
 authenticator.login(location="sidebar", fields={"Form name": "Connexion"})
 
 authentication_status = st.session_state.get("authentication_status")
@@ -31,23 +37,14 @@ if authentication_status is None:
     st.warning("Veuillez entrer vos identifiants.")
     st.stop()
 elif authentication_status is False:
-    st.error("Nom d’utilisateur ou mot de passe incorrect.")
+    st.error("Identifiants incorrects.")
     st.stop()
 elif authentication_status:
+    authenticator.logout("Se déconnecter", location="sidebar")
     st.sidebar.success(f"Connecté en tant que {name}")
-    authenticator.logout("Se déconnecter", location="sidebar", key="logout_button")
+    st.title("📊 ALT vs BTC – Dashboard sécurisé")
 
-
-    # --- TON DASHBOARD COMMENCE ICI ---
-
-
-if authentication_status:
-    st.title("📊 ALT vs BTC – Dashboard sécurisé Long & Short")
-
-    st.sidebar.success(f"Connecté en tant que {name}")
-    authenticator.logout("Se déconnecter", location="sidebar", key="logout_button")
-
-
+    # === COMPORTEMENT LONG/SHORT ===
     def fetch_kline(symbol):
         try:
             end_time = int(time.time() * 1000)
@@ -85,10 +82,8 @@ if authentication_status:
             return []
 
     def analyze_behavior():
-        st.markdown("### 🔐 Analyse ALT vs BTC – Signaux sécurisés")
-        st.info("""
-Détection de signaux LONG & SHORT stratégiques.
-        """)
+        st.markdown("### 📈 Analyse des signaux LONG / SHORT")
+        st.info("Détection automatique des altcoins à comportement intéressant vs BTC (avec TP / SL).")
 
         symbols = get_symbols()
         btc_df = fetch_kline("BTCUSDT")
@@ -148,11 +143,11 @@ Détection de signaux LONG & SHORT stratégiques.
             time.sleep(0.05)
 
         if longs:
-            st.subheader("🚀 Longs détectés")
+            st.subheader("🚀 Opportunités LONG détectées")
             st.dataframe(pd.DataFrame(longs).sort_values(by="Δ Corrélation"))
 
         if shorts:
-            st.subheader("📉 Shorts détectés")
+            st.subheader("📉 Opportunités SHORT détectées")
             st.dataframe(pd.DataFrame(shorts).sort_values(by="Δ Corrélation", ascending=False))
 
         if not longs and not shorts:
