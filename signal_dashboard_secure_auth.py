@@ -22,14 +22,7 @@ authenticator = stauth.Authenticate(
 
 authenticator.login(location="sidebar", fields={"Form name": "Connexion"})
 
-if authenticator.authentication_status:
-    name = authenticator.name
-    username = authenticator.username
-    st.sidebar.success(f"Connecté en tant que {name}")
-    authenticator.logout("Se déconnecter", "sidebar")
-
-
-if authenticator.authentication_status:
+if authenticator.get_authentication_status():
     name = authenticator.name
     username = authenticator.username
     st.sidebar.success(f"Connecté en tant que {name}")
