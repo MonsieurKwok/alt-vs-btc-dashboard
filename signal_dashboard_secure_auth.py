@@ -26,6 +26,19 @@ authentication_status = st.session_state.get("authentication_status")
 name = st.session_state.get("name")
 username = st.session_state.get("username")
 
+if authentication_status is None:
+    st.warning("Veuillez entrer vos identifiants.")
+    st.stop()
+elif authentication_status is False:
+    st.error("Nom d’utilisateur ou mot de passe incorrect.")
+    st.stop()
+elif authentication_status:
+    st.sidebar.success(f"Connecté en tant que {name}")
+    authenticator.logout("Se déconnecter", "sidebar")
+
+    # --- TON DASHBOARD COMMENCE ICI ---
+
+
 if authentication_status:
     st.set_page_config(page_title="ALT vs BTC – Accès sécurisé", layout="wide")
     st.title("📊 ALT vs BTC – Dashboard sécurisé Long & Short")
