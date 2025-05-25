@@ -4,7 +4,7 @@ import requests
 import numpy as np
 import time
 import streamlit_authenticator as stauth
-    st.set_page_config(page_title="ALT vs BTC – Accès sécurisé", layout="wide")
+st.set_page_config(page_title="ALT vs BTC – Accès sécurisé", layout="wide")
 import yaml
 from yaml.loader import SafeLoader
 from datetime import datetime
