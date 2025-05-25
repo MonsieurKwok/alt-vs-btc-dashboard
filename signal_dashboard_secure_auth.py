@@ -71,7 +71,7 @@ if authentication_status:
 
     def analyze_behavior():
         st.markdown("### 🔐 Analyse ALT vs BTC – Signaux sécurisés")
-        st.info(\"""
+        st.info("""
 Détection de signaux LONG & SHORT stratégiques.
         """)
 
