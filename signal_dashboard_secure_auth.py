@@ -1,4 +1,3 @@
-
 import streamlit as st
 import pandas as pd
 import requests
@@ -9,7 +8,7 @@ import yaml
 from yaml.loader import SafeLoader
 from datetime import datetime
 
-# --- Authenticator config ---
+# --- Auth ---
 with open("config.yaml") as file:
     config = yaml.load(file, Loader=SafeLoader)
 
@@ -20,25 +19,19 @@ authenticator = stauth.Authenticate(
     config["cookie"]["expiry_days"]
 )
 
+# LOGIN dans la sidebar
 authenticator.login(location="sidebar", fields={"Form name": "Connexion"})
 
-if authenticator.get_authentication_status():
-    name = authenticator.name
-    username = authenticator.username
-    st.sidebar.success(f"Connecté en tant que {name}")
-    authenticator.logout("Se déconnecter", "sidebar")
+authentication_status = st.session_state.get("authentication_status")
+name = st.session_state.get("name")
+username = st.session_state.get("username")
 
-
-if authentication_status is False:
-    st.error("Nom d'utilisateur / mot de passe incorrect")
-elif authentication_status is None:
-    st.warning("Veuillez entrer vos identifiants")
-elif authentication_status:
-    authenticator.logout("Se déconnecter", "sidebar")
-    st.sidebar.success(f"Connecté en tant que {name}")
-
+if authentication_status:
     st.set_page_config(page_title="ALT vs BTC – Accès sécurisé", layout="wide")
     st.title("📊 ALT vs BTC – Dashboard sécurisé Long & Short")
+
+    st.sidebar.success(f"Connecté en tant que {name}")
+    authenticator.logout("Se déconnecter", "sidebar")
 
     def fetch_kline(symbol):
         try:
@@ -78,9 +71,9 @@ elif authentication_status:
 
     def analyze_behavior():
         st.markdown("### 🔐 Analyse ALT vs BTC – Signaux sécurisés")
-        st.info("""
-Accès protégé : détection de signaux Long & Short stratégiques.
-        """)
+        st.info(\"""
+Détection de signaux LONG & SHORT stratégiques.
+        \""")
 
         symbols = get_symbols()
         btc_df = fetch_kline("BTCUSDT")
