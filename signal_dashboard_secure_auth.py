@@ -73,7 +73,7 @@ if authentication_status:
         st.markdown("### 🔐 Analyse ALT vs BTC – Signaux sécurisés")
         st.info(\"""
 Détection de signaux LONG & SHORT stratégiques.
-        \""")
+        """)
 
         symbols = get_symbols()
         btc_df = fetch_kline("BTCUSDT")
