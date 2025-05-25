@@ -1,3 +1,4 @@
+
 import streamlit as st
 import os
 import yaml
@@ -9,13 +10,9 @@ import requests
 from yaml.loader import SafeLoader
 from datetime import datetime
 
-# Autoriser mots de passe en clair (temporaire pour test sur Streamlit Cloud)
 os.environ['STREAMLIT_AUTHENTICATOR_PLAIN_PASSWORDS'] = '1'
-
-# Doit être en tout début
 st.set_page_config(page_title="ALT vs BTC – Accès sécurisé", layout="wide")
 
-# Charger le fichier config.yaml
 with open("config.yaml") as file:
     config = yaml.load(file, Loader=SafeLoader)
 
@@ -26,7 +23,6 @@ authenticator = stauth.Authenticate(
     config["cookie"]["expiry_days"]
 )
 
-# Login
 authenticator.login(location="sidebar", fields={"Form name": "Connexion"})
 
 authentication_status = st.session_state.get("authentication_status")
@@ -44,7 +40,6 @@ elif authentication_status:
     st.sidebar.success(f"Connecté en tant que {name}")
     st.title("📊 ALT vs BTC – Dashboard sécurisé")
 
-    # === COMPORTEMENT LONG/SHORT ===
     def fetch_kline(symbol):
         try:
             end_time = int(time.time() * 1000)
@@ -58,18 +53,16 @@ elif authentication_status:
                 "limit": 1000
             }
             r = requests.get(url, params=params)
-            if r.status_code == 200 and isinstance(r.json(), list):
-                data = r.json()
-                if len(data) > 0 and isinstance(data[0], list):
-                    df = pd.DataFrame(data, columns=[
-                        "timestamp", "open", "high", "low", "close", "volume", "close_time",
-                        "quote_asset_volume", "number_of_trades", "taker_buy_base_asset_volume",
-                        "taker_buy_quote_asset_volume", "ignore"
-                    ])
-                    return df
-        except:
-            pass
-        return None
+            data = r.json()
+            df = pd.DataFrame(data, columns=[
+                "timestamp", "open", "high", "low", "close", "volume", "close_time",
+                "quote_asset_volume", "number_of_trades", "taker_buy_base_asset_volume",
+                "taker_buy_quote_asset_volume", "ignore"
+            ])
+            return df
+        except Exception as e:
+            st.error(f"Erreur parsing {symbol}: {e}")
+            return None
 
     def compute_returns(prices):
         return prices.pct_change().fillna(0)
@@ -89,8 +82,10 @@ elif authentication_status:
         btc_df = fetch_kline("BTCUSDT")
 
         if btc_df is None or btc_df.empty:
-            st.error("Erreur chargement BTC.")
-            return
+            st.error("❌ Données BTC introuvables ou vides.")
+            st.stop()
+        else:
+            st.success(f"✅ Données BTC chargées ({len(btc_df)} bougies)")
 
         btc_df["close"] = btc_df["close"].astype(float)
         btc_df["returns"] = compute_returns(btc_df["close"])
@@ -101,7 +96,7 @@ elif authentication_status:
         longs = []
         shorts = []
 
-        for symbol in symbols:
+        for symbol in symbols[:30]:
             if symbol == "BTCUSDT":
                 continue
             df = fetch_kline(symbol)
@@ -140,7 +135,7 @@ elif authentication_status:
                     })
             except:
                 continue
-            time.sleep(0.05)
+            time.sleep(0.1)
 
         if longs:
             st.subheader("🚀 Opportunités LONG détectées")
