@@ -35,7 +35,8 @@ elif authentication_status is False:
     st.stop()
 elif authentication_status:
     st.sidebar.success(f"Connecté en tant que {name}")
-    authenticator.logout("Se déconnecter", "sidebar")
+    authenticator.logout("Se déconnecter", location="sidebar", key="logout_button")
+
 
     # --- TON DASHBOARD COMMENCE ICI ---
 
@@ -44,7 +45,8 @@ if authentication_status:
     st.title("📊 ALT vs BTC – Dashboard sécurisé Long & Short")
 
     st.sidebar.success(f"Connecté en tant que {name}")
-    authenticator.logout("Se déconnecter", "sidebar")
+    authenticator.logout("Se déconnecter", location="sidebar", key="logout_button")
+
 
     def fetch_kline(symbol):
         try:
