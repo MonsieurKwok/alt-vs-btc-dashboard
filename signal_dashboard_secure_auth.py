@@ -20,7 +20,7 @@ authenticator = stauth.Authenticate(
     config["cookie"]["expiry_days"]
 )
 
-name, authentication_status, username = authenticator.login("Connexion", location="sidebar")
+name, authentication_status, username = authenticator.login(location="sidebar", fields={"Form name": "Connexion"})
 
 if authentication_status is False:
     st.error("Nom d'utilisateur / mot de passe incorrect")
