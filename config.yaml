@@ -1,10 +1,9 @@
-
 credentials:
   usernames:
     admin:
       email: admin@crypto.io
       name: Admin
-      password: '$2b$12$7MSS6cyPfqKLyzjeVS16HOz4Uw7e8AzJYpZgD85zTxov8BhLBTHXy'  # password = 'btcalt2025'
+      password: '$2b$12$uNOLm2ULYI8U0/qRU07tOeOX34Ne4YMHIAqjxZ6wIiw2aNSYrcCLi'  # alt2024btc!
 cookie:
   name: crypto_dashboard_cookie
   key: some_random_key
