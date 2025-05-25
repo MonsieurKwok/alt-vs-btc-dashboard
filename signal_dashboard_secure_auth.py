@@ -81,6 +81,22 @@ elif authentication_status:
         symbols = get_symbols()
         btc_df = fetch_kline("BTCUSDT")
 
+        # Bloc de debug
+        try:
+            r = requests.get("https://fapi.binance.com/fapi/v1/klines", params={
+                "symbol": "BTCUSDT",
+                "interval": "1h",
+                "limit": 5
+            })
+            st.subheader("🧪 TEST API Binance")
+            st.json(r.json())
+
+            btc_df_test = pd.DataFrame(r.json())
+            st.write("✅ Aperçu DataFrame brut", btc_df_test.head())
+        except Exception as e:
+            st.error(f"❌ Erreur test API brut : {e}")
+            st.stop()
+
         if btc_df is None or btc_df.empty:
             st.error("❌ Données BTC introuvables ou vides.")
             st.stop()
