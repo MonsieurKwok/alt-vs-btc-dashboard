@@ -4,6 +4,7 @@ import requests
 import numpy as np
 import time
 import streamlit_authenticator as stauth
+    st.set_page_config(page_title="ALT vs BTC – Accès sécurisé", layout="wide")
 import yaml
 from yaml.loader import SafeLoader
 from datetime import datetime
@@ -40,7 +41,6 @@ elif authentication_status:
 
 
 if authentication_status:
-    st.set_page_config(page_title="ALT vs BTC – Accès sécurisé", layout="wide")
     st.title("📊 ALT vs BTC – Dashboard sécurisé Long & Short")
 
     st.sidebar.success(f"Connecté en tant que {name}")
