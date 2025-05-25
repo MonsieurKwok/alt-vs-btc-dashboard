@@ -165,3 +165,4 @@ elif authentication_status:
             st.warning("Aucun signal détecté.")
 
     analyze_behavior()
+ 
